@@ -12,14 +12,25 @@ from sklearn.mixture import GaussianMixture
 from sklearn.neighbors import kneighbors_graph
 from itertools import cycle, islice
 
+from argparse import ArgumentParser
 
-matrix_dir = '../data/filtered_feature_bc_matrix'
-mat = scipy.io.mmread(os.path.join(matrix_dir, "matrix.mtx"))
+argparser = ArgumentParser()
+argparser.add_argument("--data_dir", type=str, default="../data/filtered_feature_bc_matrix" )
+argparser.add_argument("--matrix_file", type=str, default="matrix.mtx" )
+argparser.add_argument("--features_file", type=str, default="features.tsv" )
+argparser.add_argument("--barcodes_file", type=str, default="barcodes.tsv" )
+
+args = argparser.parse_args()
+
+
+
+matrix_dir = args.data_dir
+mat = scipy.io.mmread(os.path.join(matrix_dir, args.matrix_file))
 mat = np.array(mat.todense())
-features_path = os.path.join(matrix_dir, "features.tsv")
+features_path = os.path.join(matrix_dir, args.features_file)
 annotation  = pd.read_csv(features_path,sep='\t',header=None)
 annotation.columns = ['feature_ids','gene_names','feature_types']
-barcodes_path = os.path.join(matrix_dir, "barcodes.tsv")
+barcodes_path = os.path.join(matrix_dir, args.barcodes_file)
 barcodes = [line.strip() for line in open(barcodes_path, 'r')]
 print('Matrix dimensionality {}'.format(mat.shape))
 mat = mat.T #becase we want (samples,features) matrix
