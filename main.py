@@ -51,7 +51,7 @@ std_exp = np.sqrt(mat.std(axis=0))
 CV = std_exp/mean_exp
 
 #===== 3
-mat = mat[:,CV>=10]
+mat = mat[:,(CV>=np.quantile(CV, .05)) & (CV<=np.quantile(CV, .975))]
 
 
 cells_expression = mat.sum(axis=1)
